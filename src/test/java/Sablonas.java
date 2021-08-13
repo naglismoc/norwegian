@@ -26,20 +26,20 @@ public class Sablonas {
         String from = "OSL";
         String to = "FCO";
         driver.get("https://www.norwegian.com/api/booking/dateAvailabilitySearch?channelId=IP&culture=en&marketCode=us&adultCount=1&origin="+from+"&destination="+to+"&outboundDate="+year+"-"+month+"-01");
-
         String[] days = days(driver);
+        driver.quit();
 
         ArrayList<Flight> flights = new ArrayList<>();
         for (int i = 1; i < days.length ;i++) {
+            driver = new ChromeDriver();
             String day = (days[i].length()==2)?days[i]: "0"+days[i];
             driver.get("https://www.norwegian.com/uk/ipc/availability/avaday?AdultCount=1&A_City="+to+"&D_City="+from+"&D_Month="+year+month+"&D_Day="+day+"&IncludeTransit=true&TripType=1");
-            driver.quit();
-            driver = new ChromeDriver();
-            driver.manage().window().maximize();
-            flights.add(getData(driver));
 
+
+            flights.add(getData(driver));
+            driver.quit();
         }
-        driver.quit();
+
     }
 
     public static Flight getData(WebDriver driver){
@@ -62,6 +62,13 @@ public class Sablonas {
         Arrays.sort(days);
         return days;
     }
+    @BeforeMethod
+    public void every() {
+        System.setProperty("webdriver.chrome.driver", "drivers\\chromedriver92.exe");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
 
+    }
 
 }
